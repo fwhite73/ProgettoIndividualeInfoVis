@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Progetto Individuale InfoVis</title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+    <script type="text/javascript" src="lib/d3.v6.min.js"></script>
+</head>
+<body>
+<h1>Primo progetto InfoVis - Bianchi</h1>
+<p>Crea un file json con dei dati multivariati: ci sono 10 data-cases e ogni data-case ha quattro variabili quantitative i cui valori sono tutti positivi. In base a questi dati disegna 10 alberi da frutto nell'area di disegno (ogni albero corrisponde ad un data-case). La prima variabile determina l'altezza del tronco dell'albero, la seconda variabile la grandezza della chioma, la terza variabile la dimensione dei frutti, la quarta variabile la grandezza delle radici. Facendo click con il pulsante sinistro su una caratteristica di un albero, tutti gli alberi si dispongono in orizzontale nell'ordine crescente che si ottiene dalla variabile associata alla caratteristica cliccata. Fai in modo che i cambi di posizione degli alberi avvengano con un'animazione fluida. Usa le scale d3.js per mappare l'intervallo dei valori delle variabili (che deve poter essere arbitrario) sull'intervallo dei valori delle coordinate, che dipende dalla tua interfaccia.</p>
+<svg id="alberi" width="3000" height="3000">
+   
+</svg>
+<script>
+// 
+var dataset = [
+    {"gchioma": 100, "htronco": 50, "rfrutti": 5, "radici": 5},
+    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
+    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
+    {"gchioma": 70, "htronco": 30, "rfrutti": 5, "radici": 5},
+    {"gchioma": 20, "htronco": 10, "rfrutti": 1, "radici": 5},
+    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
+    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
+    {"gchioma": 40, "htronco": 20, "rfrutti": 1, "radici": 5}
+]// Imposta le dimensioni dell'area di disegno
+const width = 1000;
+const height = 1000;
+
+const svg = d3.select("#alberi");
+const startX = 100;
+var startY = 100;
+var k = 0;
+var maxY = 0;
+for (let i = 1; i <= dataset.length; i++) {
+    if(startY + dataset[i-1].htronco + dataset[i-1].gchioma > maxY) {
+        maxY = startY + dataset[i-1].htronco + dataset[i-1].gchioma;
+    }
+    k++;
+
+    if(startX*k + dataset[i-1].gchioma > width) {
+        k = 1;
+        startY += maxY;
+    }
+
+    const albero = svg.append("g");
+
+    albero.append("rect")
+        .attr("x", startX*k-dataset[i-1].gchioma/10)
+        .attr("y", startY + dataset[i-1].gchioma)
+        .attr("width", dataset[i-1].gchioma/5)
+        .attr("height", dataset[i-1].htronco)
+        .attr("fill", "brown");
+
+    albero.append("circle")
+        .attr("cx", startX*k)
+        .attr("cy", startY)
+        .attr("r", dataset[i-1].gchioma)
+        .attr("fill", "lightgreen")
+
+        
+    albero.append("circle")
+        .attr("cx", startX*k)
+        .attr("cy", startY)
+        .attr("r", dataset[i-1].gchioma/1.1)
+        .attr("fill", "green");
+
+    albero.append("circle")
+        .attr("cx", startX*k)
+        .attr("cy", startY)
+        .attr("r", dataset[i-1].gchioma/2)
+        .attr("fill", "darkgreen");
+    const frutti = dataset[i-1].rfrutti;
+
+    for (let j = 0; j < 5; j++) {
+
+        let cx = Math.floor(Math.random()*dataset[i-1].gchioma) + startX*k - dataset[i-1].gchioma/2;
+        let cy = Math.floor(Math.random()*dataset[i-1].gchioma) + startY - dataset[i-1].gchioma/2;
+
+        albero.append("ellipse")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("rx", frutti)
+            .attr("ry", frutti)
+            .attr("fill", "red");
+    }
+
+    // posizionamento dell'albero
+    albero.attr("transform", `translate(${k * 100}, 0)`);
+}
+
+</script>
+
+</body>
+</html>
