@@ -1,95 +1,183 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Progetto Individuale InfoVis</title>
-	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-	<meta content="utf-8" http-equiv="encoding">
-    <script type="text/javascript" src="lib/d3.v6.min.js"></script>
+  <title>Progetto Individuale InfoVis</title>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <script type="text/javascript" src="lib/d3.v6.min.js"></script>
 </head>
+
 <body>
-<h1>Primo progetto InfoVis - Bianchi</h1>
-<p>Crea un file json con dei dati multivariati: ci sono 10 data-cases e ogni data-case ha quattro variabili quantitative i cui valori sono tutti positivi. In base a questi dati disegna 10 alberi da frutto nell'area di disegno (ogni albero corrisponde ad un data-case). La prima variabile determina l'altezza del tronco dell'albero, la seconda variabile la grandezza della chioma, la terza variabile la dimensione dei frutti, la quarta variabile la grandezza delle radici. Facendo click con il pulsante sinistro su una caratteristica di un albero, tutti gli alberi si dispongono in orizzontale nell'ordine crescente che si ottiene dalla variabile associata alla caratteristica cliccata. Fai in modo che i cambi di posizione degli alberi avvengano con un'animazione fluida. Usa le scale d3.js per mappare l'intervallo dei valori delle variabili (che deve poter essere arbitrario) sull'intervallo dei valori delle coordinate, che dipende dalla tua interfaccia.</p>
-<svg id="alberi" width="3000" height="3000">
-   
-</svg>
-<script>
-// 
-var dataset = [
-    {"gchioma": 100, "htronco": 50, "rfrutti": 5, "radici": 5},
-    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
-    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
-    {"gchioma": 70, "htronco": 30, "rfrutti": 5, "radici": 5},
-    {"gchioma": 20, "htronco": 10, "rfrutti": 1, "radici": 5},
-    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
-    {"gchioma": 80, "htronco": 50, "rfrutti": 5, "radici": 5},
-    {"gchioma": 40, "htronco": 20, "rfrutti": 1, "radici": 5}
-]// Imposta le dimensioni dell'area di disegno
-const width = 1000;
-const height = 1000;
+  <h1>Primo progetto InfoVis - Bianchi</h1>
+  <svg id="alberi">
 
-const svg = d3.select("#alberi");
-const startX = 100;
-var startY = 100;
-var k = 0;
-var maxY = 0;
-for (let i = 1; i <= dataset.length; i++) {
-    if(startY + dataset[i-1].htronco + dataset[i-1].gchioma > maxY) {
-        maxY = startY + dataset[i-1].htronco + dataset[i-1].gchioma;
+  </svg>
+  <p>Crea un file json con dei dati multivariati: ci sono 10 data-cases e ogni data-case ha quattro variabili
+    quantitative i cui valori sono tutti positivi. In base a questi dati disegna 10 alberi da frutto nell'area di
+    disegno (ogni albero corrisponde ad un data-case). La prima variabile determina l'altezza del tronco dell'albero, la
+    seconda variabile la grandezza della chioma, la terza variabile la dimensione dei frutti, la quarta variabile la
+    grandezza delle radici. Facendo click con il pulsante sinistro su una caratteristica di un albero, tutti gli alberi
+    si dispongono in orizzontale nell'ordine crescente che si ottiene dalla variabile associata alla caratteristica
+    cliccata. Fai in modo che i cambi di posizione degli alberi avvengano con un'animazione fluida. Usa le scale d3.js
+    per mappare l'intervallo dei valori delle variabili (che deve poter essere arbitrario) sull'intervallo dei valori
+    delle coordinate, che dipende dalla tua interfaccia.</p>
+  
+  <svg id="albero">
+    <ellipse id="radici" cx="436.17300131061603" cy="100" rx="5" ry="5" fill="brown"></ellipse>
+    <rect id="tronco" x="436.17300131061603" y="170" width="14" fill="brown"></rect>
+    <circle id="cerchioEsterno" cx="436.17300131061603" cy="100" r="70" fill="lightgreen"></circle>
+    <circle id="cerchio" cx="436.17300131061603" cy="100" r="63.63636363636363" fill="green"></circle>
+    <circle id="cerchioInterno" cx="436.17300131061603" cy="100" r="35" fill="darkgreen"></circle>
+    <ellipse id="frutto0" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto1" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto2" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto3" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto4" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto5" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto6" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse id="frutto7" cx="460.77763215377894" cy="106" rx="5" ry="5" fill="red"></ellipse>
+    <!-- <ellipse cx="404.8580166011359" cy="127" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse cx="400.38444735692445" cy="74" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse cx="439.52817824377456" cy="109" rx="5" ry="5" fill="red"></ellipse>
+    <ellipse cx="410.44997815640016" cy="122" rx="5" ry="5" fill="red"></ellipse> -->
+  </svg>
+  <script>
+    // 
+    var dataset = [
+      { "gchioma": 20, "htronco": 8, "rfrutti": 2, "radici": 8 },
+      { "gchioma": 30, "htronco": 19, "rfrutti": 3, "radici": 9 },
+      { "gchioma": 40, "htronco": 32, "rfrutti": 4, "radici": 12 },
+      { "gchioma": 33, "htronco": 30, "rfrutti": 3.3, "radici": 9.9 },
+      { "gchioma": 22, "htronco": 10, "rfrutti": 2.2, "radici": 2.2 },
+      { "gchioma": 50, "htronco": 40, "rfrutti": 5, "radici": 5 },
+      { "gchioma": 27, "htronco": 15, "rfrutti": 2.7, "radici": 2.7 },
+      { "gchioma": 15, "htronco": 11, "rfrutti": 1.5, "radici": 1.5 },
+      { "gchioma": 24, "htronco": 13, "rfrutti": 2.4, "radici": 2.4 },
+      { "gchioma": 35, "htronco": 21, "rfrutti": 3.5, "radici": 3.5 }
+    ]
+    
+    // Imposta le dimensioni dell'area di disegno
+    const width = window.innerWidth
+      || document.documentElement.clientWidth
+      || document.body.clientWidth;
+    const height = window.innerHeight
+      || document.documentElement.clientHeight
+      || document.body.clientHeight;
+
+    document.getElementById('alberi').setAttribute('width', width / 1.05);
+    document.getElementById('alberi').setAttribute('height', height / 1.05);
+
+    // Calcolo parametri
+    var maxWidth = d3.max(dataset, (d) => 2 * d.gchioma);
+    var maxHeight = d3.max(dataset, (d) => 2 * d.gchioma + d.htronco);
+    var sumWidth = d3.sum(dataset, (d) => 2 * d.gchioma);
+    var maxHtronco = d3.max(dataset, (d) => d.htronco);
+
+    var x = d3.scaleLinear()
+        .domain([0, sumWidth])
+        .range([0, width / 1.05]);
+
+    var y = d3.scaleLinear()
+      .domain([0, maxHeight])
+      .range([0, height / 1.05]);
+
+
+    // Preparazione area di disegno con sfondo
+    const svg = d3.select("#alberi");
+    
+    svg.attr("fill", "lightblue");
+    svg.attr("style", "background: lightblue; border: 1px solid black;");
+    svg.append("rect")
+      .attr("x", 0)
+      .attr("y", y(maxHeight / 2 * 1.5))
+      .attr("width", "100%")
+      .attr("height", y(maxHeight))
+      .attr("fill", "green");
+    
+    // Disegno
+    updateDrawing();
+
+    function updateDrawing() {
+      const svgAlbero = document.getElementById('albero');
+      var maxY = 0;
+      startX = maxWidth / 2;
+
+      const svg = d3.select("#alberi");
+      svg.selectAll('.albero')
+        .data(dataset)
+        .enter()
+        .append(() => svgAlbero.cloneNode(true))
+        .attr("class", "albero")
+        .each(function (d, i) {
+          startY = maxHeight / 2 + (maxHtronco - d.htronco);
+          posy = y(startY) + x(d.gchioma);
+          d3.select(this).select('#radici')
+            .transition()
+            .attr('cx', x(startX))
+            .attr('cy', y(startY+d.htronco))
+            .attr("rx", x(d.radici))
+            .attr("ry", x(d.radici / 1.5))
+            .attr("fill", "#8b4513")
+            .attr("onclick", "sortBy('radici')");
+          d3.select(this).select('#tronco')
+            .transition()
+            .attr('x', x(startX - d.gchioma/8))
+            .attr('y', y(startY))
+            .attr('width', x(d.gchioma*2 / 8))
+            .attr("height", y(d.htronco))
+            .attr("fill", "brown")
+            .attr("onclick", "sortBy('htronco')");
+          d3.select(this).select('#cerchioEsterno')
+            .transition()
+            .attr('cx', x(startX))
+            .attr('cy', y(startY) - x(d.gchioma))
+            .attr("r", x(d.gchioma))
+            .attr("fill", "lightgreen")
+            .attr("onclick", "sortBy('gchioma')");
+          d3.select(this).select('#cerchio')
+            .transition()
+            .attr('cx', x(startX))
+            .attr('cy', y(startY) - x(d.gchioma))
+            .attr("r", x(d.gchioma / 1.1))
+            .attr("fill", "green")
+            .attr("onclick", "sortBy('gchioma')");
+          d3.select(this).select('#cerchioInterno')
+            .transition()
+            .attr('cx', x(startX))
+            .attr('cy', y(startY) - x(d.gchioma))
+            .attr("r", x(d.gchioma / 2))
+            .attr("fill", "darkgreen")
+            .attr("onclick", "sortBy('gchioma')");
+            
+          for(let i = 0; i<8; i++){
+            let cx = Math.floor(Math.random()*d.gchioma) + startX - d.gchioma/2;
+              cy = y(startY) - x(d.gchioma)*2/1.2 + y(Math.floor(Math.random()*d.gchioma)/1.5);
+              d3.select(this).select('#frutto'+i)
+              .transition()
+              .attr('cx', x(cx))
+              .attr('cy', cy)
+              .attr("rx", x(d.rfrutti))
+              .attr("ry", x(d.rfrutti))
+              .attr("fill", "red")
+            .attr("onclick", "sortBy('rfrutti')");
+          }
+          
+          startX += maxWidth / 2;
+        });
     }
-    k++;
 
-    if(startX*k + dataset[i-1].gchioma > width) {
-        k = 1;
-        startY += maxY;
+    var i = 0;
+    function sortBy(parameter) {
+      dataset.sort((a, b) => a[parameter] - b[parameter])
+      
+      svg.selectAll(".albero").remove();
+
+      updateDrawing();
     }
 
-    const albero = svg.append("g");
-
-    albero.append("rect")
-        .attr("x", startX*k-dataset[i-1].gchioma/10)
-        .attr("y", startY + dataset[i-1].gchioma)
-        .attr("width", dataset[i-1].gchioma/5)
-        .attr("height", dataset[i-1].htronco)
-        .attr("fill", "brown");
-
-    albero.append("circle")
-        .attr("cx", startX*k)
-        .attr("cy", startY)
-        .attr("r", dataset[i-1].gchioma)
-        .attr("fill", "lightgreen")
-
-        
-    albero.append("circle")
-        .attr("cx", startX*k)
-        .attr("cy", startY)
-        .attr("r", dataset[i-1].gchioma/1.1)
-        .attr("fill", "green");
-
-    albero.append("circle")
-        .attr("cx", startX*k)
-        .attr("cy", startY)
-        .attr("r", dataset[i-1].gchioma/2)
-        .attr("fill", "darkgreen");
-    const frutti = dataset[i-1].rfrutti;
-
-    for (let j = 0; j < 5; j++) {
-
-        let cx = Math.floor(Math.random()*dataset[i-1].gchioma) + startX*k - dataset[i-1].gchioma/2;
-        let cy = Math.floor(Math.random()*dataset[i-1].gchioma) + startY - dataset[i-1].gchioma/2;
-
-        albero.append("ellipse")
-            .attr("cx", cx)
-            .attr("cy", cy)
-            .attr("rx", frutti)
-            .attr("ry", frutti)
-            .attr("fill", "red");
-    }
-
-    // posizionamento dell'albero
-    albero.attr("transform", `translate(${k * 100}, 0)`);
-}
-
-</script>
+  </script>
 
 </body>
+
 </html>
