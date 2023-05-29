@@ -66,7 +66,7 @@ function setupDrawing() {
     maxHtronco = d3.max(dataset, (d) => d.htronco);
 
     x = d3.scaleLinear()
-        .domain([0, sumWidth])
+        .domain([0, 5*maxWidth])
         .range([0, width / 1.05]);
 
     y = d3.scaleLinear()
@@ -77,7 +77,7 @@ function setupDrawing() {
 
     svg.append("rect")
         .attr("x", 0)
-        .attr("y", y(maxHeight / 2 * 1.5))
+        .attr("y", y(maxHeight / 2 * 1.2))
         .attr("width", "100%")
         .attr("height", y(maxHeight))
         .attr("fill", "green");
@@ -87,8 +87,8 @@ function setupDrawing() {
 
 function drawTrees() {
     const svgAlbero = document.getElementsByClassName('albero')[0];
-    console.log(svgAlbero);
-    startX = maxWidth / 2;
+    startX = maxWidth / 4;
+    var step = maxWidth / 2;
 
     posX = [];
     svg.selectAll('.albero')
@@ -171,7 +171,7 @@ function drawTrees() {
             d.pos = i;
 
             posX[i] = startX;
-            startX += maxWidth / 2;
+            startX += step;
         });
 }
 
