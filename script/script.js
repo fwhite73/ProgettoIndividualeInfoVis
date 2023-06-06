@@ -81,6 +81,7 @@ function setupDrawing() {
         .attr("width", "100%")
         .attr("height", y(maxHeight))
         .attr("fill", "green");
+
 }
 
 
@@ -177,6 +178,8 @@ function drawTrees() {
 
 function updateTrees() {
     let transitionDuration = 2000;
+    document.getElementById('movimento1').setAttribute('style', 'display:block');
+    document.getElementById('movimento2').setAttribute('style', 'display:block');
     svg.selectAll('.albero')
         .each(function (d) {
             startX = posX[d.pos];
@@ -234,6 +237,11 @@ function updateTrees() {
 
         }
         );
+        setTimeout(() => {
+            document.getElementById('movimento1').setAttribute('style', 'display:none');
+            document.getElementById('movimento2').setAttribute('style', 'display:none');    
+        }, 2000);
+    
 }
 
 function sortBy(parameter) {
