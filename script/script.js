@@ -50,6 +50,11 @@ const height = window.innerHeight
     || document.documentElement.clientHeight
     || document.body.clientHeight;
 
+const RANGE_CHIOMA = [width/50, width/10]
+const RANGE_FRUTTI = [width/250, width/200]
+const RANGE_TRONCO = [height/7, height/4]
+const RANGE_RADICI = [width/40, width/10]
+
 document.getElementById('alberi').setAttribute('width', width / 1.05);
 document.getElementById('alberi').setAttribute('height', height / 1.05);
 
@@ -73,7 +78,22 @@ function setupDrawing() {
         .domain([0, maxHeight])
         .range([0, height / 1.05]);
 
+    scaleChioma = d3.scaleLinear()
+    .domain([d3.min(dataset, (d) => d.gchioma), d3.max(dataset, (d) => d.gchioma)])
+    .range(RANGE_CHIOMA);
 
+    scaleFrutti = d3.scaleLinear()
+    .domain([d3.min(dataset, (d) => d.rfrutti), d3.max(dataset, (d) => 2*d.rfrutti)])
+    .range(RANGE_FRUTTI);
+    
+    scaleTronco = d3.scaleLinear()
+    .domain([d3.min(dataset, (d) => d.htronco), d3.max(dataset, (d) => 2*d.htronco)])
+    .range(RANGE_TRONCO);
+
+    scaleRadici = d3.scaleLinear()
+    .domain([d3.min(dataset, (d) => d.radici), d3.max(dataset, (d) => 2*d.radici)])
+    .range(RANGE_RADICI);
+    
 
     svg.append("rect")
         .attr("x", 0)
@@ -99,72 +119,72 @@ function drawTrees() {
         .attr("class", "albero")
         .attr("style","")
         .each(function (d, i) {
-            startY = maxHeight / 2 + (maxHtronco - d.htronco);
-            posy = y(startY) + x(d.gchioma);
+            startY = maxHeight / 2;
+            posy = y(startY) + scaleChioma(d.gchioma);
 
             d3.select(this).select('.radici1')
                 .transition()
-                .attr('d', "M" + x(startX - d.radici) + " " + y(startY + d.htronco + d.htronco / 10) + " Q " + x(startX) + " " + y(startY + d.htronco * 3 / 4) + ", " + x(startX + d.radici) + " " + y(startY + d.htronco + d.htronco / 10))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici)) + " " + (y(startY) + scaleTronco(1.2*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.2) + ", " + (x(startX) + scaleRadici(d.radici)) + " " + (y(startY) + scaleTronco(1.2*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
                 .attr("onclick", "sortBy('radici')");
 
             d3.select(this).select('.radici2')
                 .transition()
-                .attr('d', "M" + x(startX - d.radici / 2) + " " + y(startY + d.htronco + d.htronco / 6) + " Q " + x(startX) + " " + y(startY + d.htronco / 2) + ", " + x(startX + d.radici / 2) + " " + y(startY + d.htronco + d.htronco / 6))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici/3)) + " " + (y(startY) + scaleTronco(1.3*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.3) + ", " + (x(startX) + scaleRadici(d.radici/3)) + " " + (y(startY) + scaleTronco(1.3*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
                 .attr("onclick", "sortBy('radici')");
 
             d3.select(this).select('.radici3')
                 .transition()
-                .attr('d', "M" + x(startX - d.radici / 3) + " " + y(startY + d.htronco + d.htronco / 8) + " Q " + x(startX) + " " + y(startY + d.htronco / 2) + ", " + x(startX + d.radici / 3) + " " + y(startY + d.htronco + d.htronco / 8))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici/5)) + " " + (y(startY) + scaleTronco(1.4*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.4) + ", " + (x(startX) + scaleRadici(d.radici/5)) + " " + (y(startY) + scaleTronco(1.4*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
                 .attr("onclick", "sortBy('radici')");
 
             d3.select(this).select('.tronco')
                 .transition()
-                .attr('x', x(startX - d.gchioma / 8))
+                .attr('x', x(startX)-(scaleTronco(d.htronco)/10))
                 .attr('y', y(startY))
-                .attr('width', x(d.gchioma * 2 / 8))
-                .attr("height", y(d.htronco))
+                .attr('width', scaleTronco(d.htronco)/5)
+                .attr("height", scaleTronco(d.htronco))
                 .attr("fill", "#8b4513")
                 .attr("onclick", "sortBy('htronco')");
 
             d3.select(this).select('.cerchioEsterno')
                 .transition()
                 .attr('cx', x(startX))
-                .attr('cy', y(startY) - x(d.gchioma))
-                .attr("r", x(d.gchioma))
+                .attr('cy', y(startY) - scaleChioma(d.gchioma))
+                .attr("r", scaleChioma(d.gchioma))
                 .attr("fill", "lightgreen")
                 .attr("onclick", "sortBy('gchioma')");
 
             d3.select(this).select('.cerchio')
                 .transition()
                 .attr('cx', x(startX))
-                .attr('cy', y(startY) - x(d.gchioma))
-                .attr("r", x(d.gchioma / 1.1))
+                .attr('cy', y(startY) - scaleChioma(d.gchioma))
+                .attr("r", scaleChioma(d.gchioma / 1.1))
                 .attr("fill", "green")
                 .attr("onclick", "sortBy('gchioma')");
 
             d3.select(this).select('.cerchioInterno')
                 .transition()
                 .attr('cx', x(startX))
-                .attr('cy', y(startY) - x(d.gchioma))
-                .attr("r", x(d.gchioma / 2))
+                .attr('cy', y(startY) - scaleChioma(d.gchioma))
+                .attr("r", scaleChioma(d.gchioma / 2))
                 .attr("fill", "darkgreen")
                 .attr("onclick", "sortBy('gchioma')");
 
             for (let i = 0; i < 8; i++) {
                 let cx = Math.floor(Math.random() * d.gchioma) + startX - d.gchioma / 2;
-                cy = y(startY) - x(d.gchioma) * 2 / 1.2 + y(Math.floor(Math.random() * d.gchioma) / 1.5);
+                cy = y(startY) - scaleChioma(d.gchioma) * 2 / 1.2 + y(Math.floor(Math.random() * d.gchioma) / 1.5);
                 d3.select(this).select('.frutto' + i)
                     .transition()
                     .attr('cx', x(cx))
                     .attr('cy', cy)
-                    .attr("rx", x(d.rfrutti))
-                    .attr("ry", x(d.rfrutti))
+                    .attr("rx", scaleFrutti(d.rfrutti))
+                    .attr("ry", scaleFrutti(d.rfrutti))
                     .attr("fill", "red")
                     .attr("onclick", "sortBy('rfrutti')");
             }
@@ -184,34 +204,35 @@ function updateTrees() {
         .each(function (d) {
             startX = posX[d.pos];
 
-            startY = maxHeight / 2 + (maxHtronco - d.htronco);
-            posy = y(startY) + x(d.gchioma);
-
+            startY = maxHeight / 2;
+            
             d3.select(this).select('.radici1')
                 .transition()
                 .duration(transitionDuration)
-                .attr('d', "M" + x(startX - d.radici) + " " + y(startY + d.htronco + d.htronco / 10) + " Q " + x(startX) + " " + y(startY + d.htronco * 3 / 4) + ", " + x(startX + d.radici) + " " + y(startY + d.htronco + d.htronco / 10))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici)) + " " + (y(startY) + scaleTronco(1.2*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.2) + ", " + (x(startX) + scaleRadici(d.radici)) + " " + (y(startY) + scaleTronco(1.2*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
+                .attr("onclick", "sortBy('radici')");
 
             d3.select(this).select('.radici2')
                 .transition()
                 .duration(transitionDuration)
-                .attr('d', "M" + x(startX - d.radici / 2) + " " + y(startY + d.htronco + d.htronco / 6) + " Q " + x(startX) + " " + y(startY + d.htronco / 2) + ", " + x(startX + d.radici / 2) + " " + y(startY + d.htronco + d.htronco / 6))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici/3)) + " " + (y(startY) + scaleTronco(1.3*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.3) + ", " + (x(startX) + scaleRadici(d.radici/3)) + " " + (y(startY) + scaleTronco(1.3*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
+                .attr("onclick", "sortBy('radici')");
 
             d3.select(this).select('.radici3')
                 .transition()
                 .duration(transitionDuration)
-                .attr('d', "M" + x(startX - d.radici / 3) + " " + y(startY + d.htronco + d.htronco / 8) + " Q " + x(startX) + " " + y(startY + d.htronco / 2) + ", " + x(startX + d.radici / 3) + " " + y(startY + d.htronco + d.htronco / 8))
+                .attr('d', "M" + (x(startX) - scaleRadici(d.radici/5)) + " " + (y(startY) + scaleTronco(1.4*d.htronco)) + " Q " + x(startX) + " " + (y(startY) + scaleTronco(d.htronco)/1.4) + ", " + (x(startX) + scaleRadici(d.radici/5)) + " " + (y(startY) + scaleTronco(1.4*d.htronco)))
                 .attr("stroke", "#8b4513")
                 .attr("stroke-width", 4)
 
             d3.select(this).select('.tronco')
                 .transition()
                 .duration(transitionDuration)
-                .attr('x', x(startX - d.gchioma / 8))
+                .attr('x', x(startX)-(scaleTronco(d.htronco)/10))
             d3.select(this).select('.cerchioEsterno')
                 .transition()
                 .duration(transitionDuration)
@@ -231,8 +252,8 @@ function updateTrees() {
                     .transition()
                     .duration(transitionDuration)
                     .attr('cx', x(cx))
-                    .attr("rx", x(d.rfrutti))
-                    .attr("ry", x(d.rfrutti));
+                    .attr("rx", scaleFrutti(d.rfrutti))
+                    .attr("ry", scaleFrutti(d.rfrutti));
             }
 
         }

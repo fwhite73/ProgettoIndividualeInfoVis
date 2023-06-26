@@ -1,8 +1,8 @@
 [
-    { "gchioma": 20, "htronco": 8, "rfrutti": 2.5, "radici": 8 },
-    { "gchioma": 30, "htronco": 19, "rfrutti": 2, "radici": 9 },
-    { "gchioma": 40, "htronco": 32, "rfrutti": 4, "radici": 12 },
-    { "gchioma": 33, "htronco": 30, "rfrutti": 3.3, "radici": 9.9 },
+    { "gchioma": 200, "htronco": 8, "rfrutti": 2.5, "radici": 8 },
+    { "gchioma": 30, "htronco": 190, "rfrutti": 2, "radici": 9 },
+    { "gchioma": 40, "htronco": 32, "rfrutti": 40, "radici": 12 },
+    { "gchioma": 33, "htronco": 30, "rfrutti": 3.3, "radici": 90.9 },
     { "gchioma": 22, "htronco": 10, "rfrutti": 2.2, "radici": 8.5 },
     { "gchioma": 50, "htronco": 40, "rfrutti": 5, "radici": 30 },
     { "gchioma": 27, "htronco": 15, "rfrutti": 2.7, "radici": 15 },
